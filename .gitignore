@@ -1,0 +1,21 @@
+# Build output
+bin/
+obj/
+.vs/
+
+# Visual Studio user files
+*.user
+*.suo
+*.userosscache
+
+# Rider
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local database backups and secrets
+*.bak
+*.dump
+appsettings.Local.json
