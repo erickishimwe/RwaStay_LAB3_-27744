@@ -73,8 +73,7 @@ git init
 git add .
 git commit -m "Build RwaStay booking system"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
+git remote add origin https://github.com/erickishimwe/(https://github.com/erickishimwe/RwaStay_LAB3_-27744)
 git push -u origin main
 ```
 
-Replace the remote URL with your GitHub repository URL.
