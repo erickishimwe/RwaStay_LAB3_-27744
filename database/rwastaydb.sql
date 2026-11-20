@@ -80,3 +80,15 @@ INSERT IGNORE INTO guests (full_name, email, phone) VALUES
 ('Jean Claude Habimana', 'jean@example.com', '+250788777888'),
 ('Claudine Ingabire', 'claudine@example.com', '+250788999000'),
 ('Patrick Tuyisenge', 'patrick@example.com', '+250788123456');
+
+CREATE TABLE IF NOT EXISTS users (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	username VARCHAR(80) NOT NULL UNIQUE,
+	password_hash VARCHAR(255) NOT NULL,
+	role VARCHAR(20) NOT NULL,
+	host_id INT NULL,
+	guest_id INT NULL,
+	CONSTRAINT fk_users_host FOREIGN KEY (host_id) REFERENCES hosts(id) ON DELETE SET NULL,
+	CONSTRAINT fk_users_guest FOREIGN KEY (guest_id) REFERENCES guests(id) ON DELETE SET NULL,
+	CONSTRAINT chk_users_role CHECK (role IN ('ADMIN','MANAGER','CLIENT'))
+) ENGINE=InnoDB;

@@ -1,26 +1,35 @@
 using lab3Rwastay.Controllers;
 using lab3Rwastay.Data;
+using lab3Rwastay.Models;
 
 namespace lab3Rwastay.Views;
 
 public sealed class MainForm : Form
 {
-    public MainForm()
+    private readonly User currentUser;
+
+    public MainForm(User currentUser)
     {
-        Text = "RwaStay - Rwanda Stay Booking System";
+        this.currentUser = currentUser;
+        Text = $"RwaStay - {currentUser.Role} dashboard";
         StartPosition = FormStartPosition.CenterScreen;
         MinimumSize = new Size(700, 450);
         Size = new Size(900, 600);
         BackColor = Color.White;
 
         var title = new Label { Text = "RwaStay", Font = new Font("Segoe UI", 26, FontStyle.Bold), ForeColor = Color.DarkGreen, Dock = DockStyle.Top, Height = 65, TextAlign = ContentAlignment.MiddleCenter };
-        var subtitle = new Label { Text = "Manage hosts, stays, guests, and bookings", Dock = DockStyle.Top, Height = 35, TextAlign = ContentAlignment.TopCenter };
+        var subtitle = new Label { Text = $"Welcome, {currentUser.DisplayName} ({currentUser.Role})", Dock = DockStyle.Top, Height = 35, TextAlign = ContentAlignment.TopCenter };
         var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, WrapContents = false, Padding = new Padding(30), AutoScroll = true };
-        buttons.Controls.Add(CreateButton("Manage Hosts", (_, _) => Open(() => new HostForm())));
-        buttons.Controls.Add(CreateButton("Manage Stays", (_, _) => Open(() => new StayForm())));
-        buttons.Controls.Add(CreateButton("Manage Guests", (_, _) => Open(() => new GuestForm())));
-        buttons.Controls.Add(CreateButton("Manage Bookings", (_, _) => Open(() => new BookingForm())));
+        if (currentUser.Role == UserRole.Admin)
+        {
+            buttons.Controls.Add(CreateButton("Manage Hosts", (_, _) => Open(() => new HostForm())));
+            buttons.Controls.Add(CreateButton("Manage Stays", (_, _) => Open(() => new StayForm())));
+            buttons.Controls.Add(CreateButton("Manage Guests", (_, _) => Open(() => new GuestForm())));
+        }
+        if (currentUser.Role is UserRole.Admin or UserRole.Manager or UserRole.Client)
+            buttons.Controls.Add(CreateButton("Bookings", (_, _) => Open(() => new BookingForm(currentUser))));
         buttons.Controls.Add(CreateButton("Test MySQL Connection", (_, _) => TestConnection()));
+        buttons.Controls.Add(CreateButton("Logout", (_, _) => { DialogResult = DialogResult.Retry; Close(); }));
         Controls.Add(buttons); Controls.Add(subtitle); Controls.Add(title);
     }
 

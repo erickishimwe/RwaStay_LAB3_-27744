@@ -33,6 +33,11 @@ You can also open `lab3Rwastay.slnx` in Visual Studio and press **F5**.
 
 ## Features
 
+- Role-based login and logout for administrators, managers, and clients
+- Client self-registration with PBKDF2 password hashing
+- Admin dashboard with full data access
+- Manager dashboard showing bookings only for the manager's own host
+- Client dashboard showing and allowing cancellation of only the client's own bookings
 - Host, stay, and guest CRUD management
 - Search hosts, stays, and guests
 - Booking creation with guest/stay selection
@@ -42,6 +47,17 @@ You can also open `lab3Rwastay.slnx` in Visual Studio and press **F5**.
 - Check-out date validation
 - Overlap prevention for active bookings
 - Friendly MySQL connection error messages
+
+## Login accounts
+
+On first startup, the application creates the authentication table and these development accounts:
+
+| Role | Username | Password | Access |
+|---|---|---|---|
+| Admin | `admin` | `admin123` | Full system control |
+| Manager | `manager1` | `manager123` | Bookings for the first host |
+
+Clients use **Client registration** on the login screen. In a real deployment, change the development passwords immediately.
 
 ## MVC structure
 

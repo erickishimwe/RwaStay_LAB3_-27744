@@ -5,7 +5,7 @@ namespace lab3Rwastay.Data;
 
 public sealed class BookingRepository
 {
-    public List<Booking> GetAll()
+    public List<Booking> GetAll(int? hostId = null, int? guestId = null)
     {
         const string sql = """
             SELECT b.id, b.guest_id, g.full_name AS guest_name, b.stay_id, s.title AS stay_title,
@@ -13,12 +13,16 @@ public sealed class BookingRepository
             FROM bookings b
             INNER JOIN guests g ON g.id = b.guest_id
             INNER JOIN stays s ON s.id = b.stay_id
+            WHERE (@host_id IS NULL OR s.host_id = @host_id)
+              AND (@guest_id IS NULL OR b.guest_id = @guest_id)
             ORDER BY b.check_in DESC, b.id DESC;
             """;
         var result = new List<Booking>();
         using var connection = DbConnection.Create();
         connection.Open();
         using var command = new MySqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@host_id", hostId.HasValue ? hostId.Value : DBNull.Value);
+        command.Parameters.AddWithValue("@guest_id", guestId.HasValue ? guestId.Value : DBNull.Value);
         using var reader = command.ExecuteReader();
         while (reader.Read()) result.Add(Map(reader));
         return result;

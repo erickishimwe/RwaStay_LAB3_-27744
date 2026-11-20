@@ -25,6 +25,7 @@ internal static class UiHelpers
         {
             MySqlException => "Could not access MySQL. Make sure MySQL is running in XAMPP and the rwastaydb database exists.",
             ArgumentException => exception.Message,
+            UnauthorizedAccessException => exception.Message,
             _ => $"Something went wrong: {exception.Message}"
         };
         MessageBox.Show(message, "RwaStay", MessageBoxButtons.OK, MessageBoxIcon.Error);

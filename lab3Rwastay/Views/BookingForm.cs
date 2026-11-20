@@ -6,7 +6,8 @@ namespace lab3Rwastay.Views;
 
 public sealed class BookingForm : Form
 {
-    private readonly BookingController controller = new(new BookingRepository(), new GuestRepository(), new StayRepository());
+    private readonly BookingController controller;
+    private readonly User currentUser;
     private readonly ComboBox guest = new(), stay = new(), status = new();
     private readonly DateTimePicker checkIn = new() { Format = DateTimePickerFormat.Short, MinDate = DateTime.Today };
     private readonly DateTimePicker checkOut = new() { Format = DateTimePickerFormat.Short, MinDate = DateTime.Today.AddDays(1) };
@@ -14,8 +15,10 @@ public sealed class BookingForm : Form
     private readonly DataGridView grid = new();
     private int selectedId;
 
-    public BookingForm()
+    public BookingForm(User currentUser)
     {
+        this.currentUser = currentUser;
+        controller = new BookingController(new BookingRepository(), new GuestRepository(), new StayRepository(), currentUser);
         Text = "Bookings"; StartPosition = FormStartPosition.CenterParent; Size = new Size(1100, 650);
         guest.DropDownStyle = ComboBoxStyle.DropDownList; guest.DisplayMember = nameof(Guest.FullName); guest.ValueMember = nameof(Guest.Id);
         stay.DropDownStyle = ComboBoxStyle.DropDownList; stay.DisplayMember = nameof(Stay.Title); stay.ValueMember = nameof(Stay.Id);
@@ -23,7 +26,7 @@ public sealed class BookingForm : Form
         var editor = new TableLayoutPanel { Dock = DockStyle.Top, Height = 135, ColumnCount = 6, RowCount = 2, Padding = new Padding(8) };
         for (var i = 0; i < 6; i++) editor.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.66f));
         AddEditor(editor, "Guest", guest, 0); AddEditor(editor, "Stay", stay, 1); AddEditor(editor, "Check-in", checkIn, 2); AddEditor(editor, "Check-out", checkOut, 3); AddEditor(editor, "Status", status, 4); editor.Controls.Add(total, 5, 1);
-        var actions = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 45, Padding = new Padding(8) }; var create = UiHelpers.Button("Create booking"); create.Click += (_, _) => Create(); var change = UiHelpers.Button("Change status"); change.Click += (_, _) => ChangeStatus(); var cancel = UiHelpers.Button("Cancel booking"); cancel.Click += (_, _) => Cancel(); var delete = UiHelpers.Button("Delete"); delete.Click += (_, _) => Delete(); actions.Controls.Add(create); actions.Controls.Add(change); actions.Controls.Add(cancel); actions.Controls.Add(delete);
+        var actions = new FlowLayoutPanel { Dock = DockStyle.Top, Height = 45, Padding = new Padding(8) }; var create = UiHelpers.Button("Create booking"); create.Click += (_, _) => Create(); var change = UiHelpers.Button("Change status"); change.Click += (_, _) => ChangeStatus(); var cancel = UiHelpers.Button("Cancel booking"); cancel.Click += (_, _) => Cancel(); var delete = UiHelpers.Button("Delete"); delete.Click += (_, _) => Delete(); if (currentUser.Role != UserRole.Manager) actions.Controls.Add(create); if (currentUser.Role == UserRole.Admin) actions.Controls.Add(change); if (currentUser.Role is UserRole.Admin or UserRole.Client) actions.Controls.Add(cancel); if (currentUser.Role == UserRole.Admin) actions.Controls.Add(delete);
         checkIn.ValueChanged += (_, _) => UpdateTotal(); checkOut.ValueChanged += (_, _) => UpdateTotal(); stay.SelectedIndexChanged += (_, _) => UpdateTotal();
         UiHelpers.ConfigureGrid(grid); grid.SelectionChanged += (_, _) => SelectRow(); Controls.Add(grid); Controls.Add(actions); Controls.Add(editor); LoadLookups(); LoadRows();
     }
