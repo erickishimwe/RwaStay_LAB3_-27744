@@ -73,7 +73,7 @@ git init
 git add .
 git commit -m "Build RwaStay booking system"
 git branch -M main
-git remote add origin https://github.com/erickishimwe/(https://github.com/erickishimwe/RwaStay_LAB3_-27744)
+git remote add origin https://github.com/erickishimwe/https://github.com/erickishimwe/RwaStay_LAB3_-27744.git
 git push -u origin main
 ```
 
